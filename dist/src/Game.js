@@ -2,9 +2,11 @@ import HtmlBuilder from "./HtmlBuilder.js";
 export default class Game {
     _lcContainer = document.getElementById("letter_choice_container");
     _lettersContainer = document.getElementById("letters_container");
-    _words = ["Estudar", "Javascript", "Memoria", "Processador", "React", "Angular", "Svelte", "Discord", "Python", "Ruby", "Programacao"];
+    _wrongLettersContainer = document.getElementById("wrong_letters");
+    _words = ["estudar", "javascript", "memoria", "processador", "react", "angular", "svelte", "discord", "python", "ruby", "programacao"];
     _tentativasElement = document.getElementById("tentativas");
     _alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "y", "w", "z"];
+    _wrongLetters = [];
     word = {};
     chances = 7;
     constructor() { }
@@ -13,6 +15,16 @@ export default class Game {
         this._generateLettersScreen();
         this._refreshWordScreen();
         this._tentativasElement.innerText = this.chances.toString();
+    }
+    _refreshWrongLettersScreen() {
+        this._wrongLettersContainer.innerHTML = "";
+        const wrongLetters = this._wrongLetters.map(l => {
+            const el = new HtmlBuilder().createElement("div", l).classes(["wrong_letter"]).complete();
+            return el;
+        });
+        wrongLetters.forEach(e => {
+            this._wrongLettersContainer.appendChild(e);
+        });
     }
     _refreshWordScreen() {
         let incompleteWord = "";
@@ -41,6 +53,8 @@ export default class Game {
         if (!letterArray.includes(letter)) {
             this.chances--;
             this._tentativasElement.innerText = this.chances.toString();
+            this._wrongLetters.push(letter);
+            this._refreshWrongLettersScreen();
             if (this._checkLoose())
                 this._loose();
             return;
@@ -71,7 +85,7 @@ export default class Game {
         const word = this._words[wordIndex];
         return {
             completed: false,
-            rightLettersIndex: [0, 1, 2, 3],
+            rightLettersIndex: [],
             size: word.length,
             word
         };

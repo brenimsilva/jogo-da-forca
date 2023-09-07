@@ -15,9 +15,11 @@ export type GuessResponse = {
 export default class Game {
     private _lcContainer = document.getElementById("letter_choice_container") as HTMLDivElement;
     private _lettersContainer = document.getElementById("letters_container") as HTMLDivElement;
-    private _words = ["Estudar", "Javascript", "Memoria", "Processador", "React", "Angular", "Svelte", "Discord", "Python", "Ruby", "Programacao"];
+    private _wrongLettersContainer = document.getElementById("wrong_letters") as HTMLDivElement;
+    private _words = ["estudar", "javascript", "memoria", "processador", "react", "angular", "svelte", "discord", "python", "ruby", "programacao"];
     private _tentativasElement = document.getElementById("tentativas") as HTMLDivElement;
     private _alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "y", "w", "z"];
+    private _wrongLetters: Array<string> = [];
     public word: WordType = {} as WordType;
     public chances: number = 7;
     constructor() {}
@@ -29,6 +31,17 @@ export default class Game {
         this._tentativasElement.innerText = this.chances.toString();
     }
 
+    private _refreshWrongLettersScreen() {
+        this._wrongLettersContainer.innerHTML = "";
+        const wrongLetters = this._wrongLetters.map(l => {
+            const el = new HtmlBuilder().createElement("div", l).classes(["wrong_letter"]).complete();
+            return el;
+        })
+        
+        wrongLetters.forEach(e => {
+            this._wrongLettersContainer.appendChild(e);
+        })
+    }
 
     private _refreshWordScreen() {
         let incompleteWord = "";
@@ -54,10 +67,12 @@ export default class Game {
             return;
         }
         const letterArray = this.word.word.split("")
-        
+
         if(!letterArray.includes(letter)) {
             this.chances--
             this._tentativasElement.innerText = this.chances.toString();
+            this._wrongLetters.push(letter);
+            this._refreshWrongLettersScreen();
             if(this._checkLoose()) this._loose();
             return;
         }
@@ -93,7 +108,7 @@ export default class Game {
         const word = this._words[wordIndex];
         return {
             completed: false,
-            rightLettersIndex: [0,1,2,3],
+            rightLettersIndex: [],
             size: word.length,
             word
         }
