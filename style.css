@@ -1,0 +1,20 @@
+#letter_choice_container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+    width: 100px;
+}
+
+.letter_choice {
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+    border-radius: 12px;
+    padding: 3px;
+    transition: all 0.1s;
+}
+
+.letter_choice:hover {
+    background-color: #1e0ab87d;
+    color: white;
+}
